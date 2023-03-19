@@ -57,7 +57,9 @@ function activate(context) {
 	});
 
 	vscode.commands.registerCommand('betterOpenEditors.openPackageFile', (treeItem) => {
-		vscode.commands.executeCommand('vscode.open', vscode.Uri.file(treeItem.packageData.packageFile));
+		if (treeItem.packageData.packageFile) {
+			vscode.commands.executeCommand('vscode.open', vscode.Uri.file(treeItem.packageData.packageFile));
+		}
 	});
 
 	vscode.commands.registerCommand('betterOpenEditors.openFileOfCurrentPackage', () => {

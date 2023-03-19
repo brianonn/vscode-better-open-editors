@@ -38,9 +38,10 @@ exports.getId = (tab) => {
  * Generates a package description string from various package manager files
  *
  * @param {string} path The folder in which the file is searched
+ * @param {boolean} isModule true if this path is a module path
  * @returns {string|null} version string in the format "[package-name] [package-version]"
  */
-exports.getPackageData = (path) => {
+exports.getPackageData = (path, isModule) => {
 	let packageFile;
 	let data = null;
 	const returner = {
@@ -48,6 +49,10 @@ exports.getPackageData = (path) => {
 		name: '',
 		version: '',
 	};
+
+	if (!isModule) {
+		return
+	}
 
 	// try multiple package files
 	if (!data) {
@@ -65,6 +70,19 @@ exports.getPackageData = (path) => {
 			data = JSON.parse(
 				$fs.readFileSync(packageFile, { encoding: 'utf8', flag: 'r' })
 			);
+		}
+	}
+
+	// terraform modules have a main.tf file
+	if (!data && isModule) {
+		packageFile = $path.join(path, 'main.tf');
+		if ($fs.existsSync(packageFile)) {
+			// The module name is the subdir where the main.tf is
+			// Terraform modules are not versioned until they are published
+			data = {
+				name :$path.basename(path),
+				version : ""
+			}
 		}
 	}
 

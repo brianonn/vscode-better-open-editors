@@ -9,15 +9,15 @@
     "packages",
     "monorepo"
   ],
-  "version": "1.8.0",
+  "version": "1.8.0-bonn",
   "preview": false,
   "license": "MIT",
   "icon": "meta/icon.png",
-  "repository": "https://github.com/McSodbrenner/vscode-better-open-editors",
+  "repository": "https://github.com/brianonn/vscode-better-open-editors",
   "engines": {
     "vscode": "^1.69.0"
   },
-  "publisher": "McSodbrenner",
+  "publisher": "brianonn",
   "categories": [
     "Other"
   ],

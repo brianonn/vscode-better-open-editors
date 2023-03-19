@@ -187,6 +187,7 @@ class TreeviewPanel {
 		if (vscode.workspace.workspaceFolders && (vscode.workspace.workspaceFolders.length > 1 || !config.get('SkipWorkspacesIfNotNeeded'))) {
 			const tabGroupIndex = tab.group.viewColumn;
 			const itemPath = helper.getPath(tab.input);
+			const packagePatterns = config.get('PackagePatterns').split('\n');
 			let workspaceFolder = null;
 	
 			// iterate through all workspaces to find the matching one
@@ -199,7 +200,8 @@ class TreeviewPanel {
 					if (this.flat.workspaceFolders[workspaceFlatId]) {
 						workspaceFolder = this.flat.workspaceFolders[workspaceFlatId];
 					} else {
-						const packageData = helper.getPackageData(workspacePath);
+						const patternMatch = packagePatterns.filter(pattern => { return minimatch(workspacePath, pattern); }).length > 0;
+						const packageData = helper.getPackageData(workspacePath, !!patternMatch);
 						workspaceFolder = new WorkspaceFolderItem(_workspace.uri, tabGroupIndex, payload.parent, packageData);
 						this.flat.workspaceFolders[workspaceFlatId] = workspaceFolder;
 						payload.parent.children.push(workspaceFolder);
@@ -226,8 +228,8 @@ class TreeviewPanel {
 
 		// second parts mean: if we have only one path separator in the path (the case on Mac for "/" and on Windows for "\")
 		while (path !== payload.parent.path && path.split($path.sep).length - 1 > 1) {
-			const packageData = helper.getPackageData(path);
 			const patternMatch = packagePatterns.filter(pattern => { return minimatch(path, pattern); } ).length > 0;
+			const packageData = helper.getPackageData(path, !!patternMatch);
 			const folderFlatId = `${tabGroupIndex}-${path}`;
 
 			if (packageData || patternMatch) {
